@@ -4,7 +4,9 @@ Kivi is a local-first voice interface that gets more yours the longer you use it
 
 ## Live Prototype
 
-[Open the live Kivi prototype](https://sanjeetkotarya.github.io/KiviDesign/)
+[Open the live Kivi prototype](https://sanjeetkotarya.github.io/KiviDesign/) — opens directly, no login required.
+
+Prototype source code is in this repository (see `/src`).
 
 ## Product Direction
 
@@ -12,3 +14,4 @@ Kivi's **Imprints** are per-app voice profiles formed from real corrections over
 
 - [Positioning Statement](positioning-statement.md)
 - [Product Vision](product-vision.md)
+- [Reference Screens (PDF)](./kivi-screens.pdf)
