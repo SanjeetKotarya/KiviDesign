@@ -1,0 +1,3 @@
+# Positioning Statement
+
+Kivi is the voice interface that gets more yours the longer you use it. Every correction, every per-app tone, every mid-sentence switch between Hindi and English isn't overhead — it's training. Cloud dictation tools smooth your voice into something generic; local tools hand you a blank slate and make you do the configuring. Kivi does neither: it starts as a stranger and becomes an extension of how you actually think, in the language you actually think in. It's for people whose voice doesn't live inside one language's box — and it must never become an assistant that talks back instead of writing for you.
