@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 
 const navItems = [
@@ -37,7 +37,7 @@ function App() {
     <main className="main-area">
       <header className="topbar"><div className="connection"><span /> listening locally <b>·</b> nothing leaves this Mac</div><div className="top-actions"><span>⌥ Space</span><button aria-label="Account menu">•••</button></div></header>
       <div className="content">
-        {screen === 'record' && <Record corrected={corrected} onCorrect={handleCorrection} onOffer={() => setShowOffer(true)} showOffer={showOffer} onDismissOffer={() => setShowOffer(false)} onForm={() => { setShowOffer(false); setScreen('imprints') }} />}
+        {screen === 'record' && <Record corrected={corrected} onCorrect={handleCorrection} onOffer={() => setShowOffer(true)} showOffer={showOffer} onDismissOffer={() => setShowOffer(false)} onForm={() => { setShowOffer(false); setScreen('imprints') }} onOpenDetail={() => { setActiveImprint(imprints.slack); setScreen('detail') }} />}
         {screen === 'imprints' && <ImprintsHome onOpen={openDetail} onFirstRun={() => setScreen('empty')} />}
         {screen === 'empty' && <EmptyImprints onBack={() => setScreen('imprints')} />}
         {screen === 'detail' && <ImprintDetail imprint={activeImprint} onBack={() => setScreen('imprints')} onMature={() => setScreen('mature')} />}
@@ -62,17 +62,26 @@ function Icon({ name }) {
   return <svg className="nav-icon" viewBox="0 0 24 24" aria-hidden="true">{paths[name]}</svg>
 }
 
-function Record({ corrected, onCorrect, onOffer, showOffer, onDismissOffer, onForm }) {
+function Record({ corrected, onCorrect, onOffer, showOffer, onDismissOffer, onForm, onOpenDetail }) {
+  const [correctionBeat, setCorrectionBeat] = useState('heard')
+  useEffect(() => {
+    if (!corrected) return
+    setCorrectionBeat('scoped')
+    const applyingTimer = setTimeout(() => setCorrectionBeat('applying'), 850)
+    const learnedTimer = setTimeout(() => { setCorrectionBeat('learned'); onOffer() }, 1900)
+    return () => { clearTimeout(applyingTimer); clearTimeout(learnedTimer) }
+  }, [corrected])
+  const transcript = correctionBeat === 'scoped' ? <>Could you <span className="removed-word">please</span> push this by today?</> : correctionBeat === 'applying' ? 'Could you push this by today?' : correctionBeat === 'learned' ? 'yaar can you push this by today' : 'Could you please push this by today?'
   return <div className="record-page page-enter">
     <div className="record-heading"><div><p className="overline">RECORD · SLACK / #ANDROID-TEAM</p><h1>say it once.</h1></div><div className="record-status"><span className="pulse" /> ready when you are</div></div>
-    <section className="transcript-card"><div className="transcript-meta"><span>heard just now</span><span>Slack imprint · forming</span></div><p className="transcript">{corrected ? 'yaar can you push this by today' : 'Could you please push this by today?'}</p>{!corrected ? <><button className="word-edit" onClick={onCorrect}>please</button><div className="correction-hint">tap a word to correct what Kivi heard</div></> : <div className="absorbed"><span className="absorb-dot" /> absorbed into Slack <span>·</span> 12 corrections toward this voice <button onClick={onOffer}>see what is forming →</button></div>}</section>
+    <section className="transcript-card"><div className="transcript-meta"><span>heard just now</span><span>Slack imprint · forming</span></div><p className={`transcript transcript-${correctionBeat}`}>{transcript}</p>{correctionBeat === 'heard' && <><button className="word-edit" onClick={onCorrect}>please</button><div className="correction-hint">tap a word to correct what Kivi heard</div></>}{correctionBeat === 'scoped' && <div className="correction-step"><span className="absorb-dot" /> one correction applied · just “please” removed</div>}{correctionBeat === 'applying' && <div className="correction-step applying-step"><span className="absorb-dot" /> Slack already knows 11 other things about how you phrase requests — applying them</div>}{correctionBeat === 'learned' && <div className="absorbed"><span className="absorb-dot" /> absorbed into Slack <span>·</span> 12 corrections toward this voice</div>}</section>
     <div className="code-switch"><span className="mini-label">ONE LINE, AS YOU SAID IT</span><p>yaar <em>can you push this by today</em></p><small>Hindi and English, inline. Nothing to choose.</small></div>
-    {showOffer && <FormationOffer onDismiss={onDismissOffer} onForm={onForm} />}
+    {showOffer && <FormationOffer onDismiss={onDismissOffer} onForm={onForm} onDetail={onOpenDetail} />}
     <div className="record-footer"><span>hold to dictate</span><kbd>⌥</kbd><kbd>Space</kbd><span className="footer-note">corrections are the only way to teach Kivi</span></div>
   </div>
 }
 
-function FormationOffer({ onDismiss, onForm }) { return <section className="formation-offer"><div className="offer-copy"><p className="overline">A QUIET QUESTION</p><h2>Slack is starting to sound like you.</h2><p>You have corrected 12 things toward casual Hinglish here. Form an Imprint so those corrections can happen automatically. You can change your mind later.</p><div className="offer-examples"><span>“Could you please...” <b>→</b> “yaar can you...”</span><span>“I will check it” <b>→</b> “dekh leta hoon”</span></div></div><div className="offer-actions"><button className="green-button" onClick={onForm}>Form Slack Imprint</button><button onClick={onDismiss}>Not now</button><button onClick={onDismiss}>Never for Slack</button></div></section> }
+function FormationOffer({ onDismiss, onForm, onDetail }) { return <section className="formation-offer"><div className="offer-copy"><p className="overline">A QUIET QUESTION</p><h2>Slack is starting to sound like you.</h2><p>You have corrected 12 things toward casual Hinglish here. Form an Imprint so those corrections can happen automatically. You can change your mind later.</p><div className="offer-examples"><span>“Could you please...” <b>→</b> “yaar can you...”</span><span>“I will check it” <b>→</b> “dekh leta hoon”</span></div><button className="offer-detail-link" onClick={onDetail}>see the Slack Imprint →</button></div><div className="offer-actions"><button className="green-button" onClick={onForm}>Form Slack Imprint</button><button onClick={onDismiss}>Not now</button><button onClick={onDismiss}>Never for Slack</button></div></section> }
 
 function ImprintsHome({ onOpen, onFirstRun }) { return <div className="imprints-page page-enter"><div className="page-heading"><div><p className="overline">YOUR SPACE · ACCUMULATED, NOT CONFIGURED</p><h1>Where Kivi knows you</h1><p className="subtitle">Each Imprint is a small history of corrections that became instinct.</p></div><span className="settled-mark">✦ 2 contexts, still learning</span></div><div className="journal-rule" /><div className="imprint-grid"><ImprintCard imprint={imprints.slack} onClick={() => onOpen(imprints.slack)} /><ImprintCard imprint={imprints.cursor} onClick={() => onOpen(imprints.cursor)} /></div><div className="thin-context"><div className="thin-mark">o</div><div><p className="overline">GMAIL · JUST BEGINNING</p><h3>Not enough history to call it an Imprint yet.</h3><p>3 corrections so far. Kivi is listening, not guessing.</p></div><span>3 corrections</span></div><p className="no-controls">There is nothing here to configure. Keep dictating; the next correction is the lever.</p><button className="first-run-link" onClick={onFirstRun}>see Kivi before it knows you →</button></div> }
 
