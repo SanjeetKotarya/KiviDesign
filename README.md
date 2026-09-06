@@ -12,4 +12,3 @@ Kivi's **Imprints** are per-app voice profiles formed from real corrections over
 
 - [Positioning Statement](positioning-statement.md)
 - [Product Vision](product-vision.md)
-# KiviDesign
