@@ -2,12 +2,12 @@ import { useState } from 'react'
 import './App.css'
 
 const navItems = [
-  { id: 'record', label: 'Record', icon: '◌' },
-  { id: 'history', label: 'History', icon: '◷' },
-  { id: 'dictionary', label: 'Dictionary', icon: '✦' },
-  { id: 'shortcuts', label: 'Shortcuts', icon: 'ϟ' },
-  { id: 'imprints', label: 'Imprints', icon: '✦' },
-  { id: 'corrections', label: 'Corrections', icon: '↗' },
+  { id: 'record', label: 'Record', icon: 'mic' },
+  { id: 'history', label: 'History', icon: 'clock' },
+  { id: 'dictionary', label: 'Dictionary', icon: 'sparkle' },
+  { id: 'shortcuts', label: 'Shortcuts', icon: 'bolt' },
+  { id: 'imprints', label: 'Imprints', icon: 'sparkle' },
+  { id: 'corrections', label: 'Corrections', icon: 'slash' },
 ]
 
 const imprints = {
@@ -30,7 +30,7 @@ function App() {
       <div>
         <div className="brand">kivi <span>the longer it listens, the more it sounds like you</span></div>
         <div className="side-rule" />
-        <nav aria-label="Kivi navigation">{navItems.map((item) => <button key={item.id} className={`nav-item ${screen === item.id || (screen === 'detail' && item.id === 'imprints') ? 'active' : ''}`} onClick={() => setScreen(item.id)}><span>{item.icon}</span>{item.label}{item.id === 'imprints' && offerState === 'open' && <i />}</button>)}</nav>
+        <nav aria-label="Kivi navigation">{navItems.map((item) => <button key={item.id} className={`nav-item ${screen === item.id || (screen === 'detail' && item.id === 'imprints') ? 'active' : ''}`} onClick={() => setScreen(item.id)}><Icon name={item.icon} />{item.label}{item.id === 'imprints' && offerState === 'open' && <i />}</button>)}</nav>
       </div>
       <div className="account"><div className="account-avatar">S</div><div><strong>Sanjeet Kotarya</strong><small>sanjeetko...mail.com</small></div><span className="account-icons">◉　⚙</span></div>
     </aside>
@@ -49,6 +49,17 @@ function App() {
       </div>
     </main>
   </div>
+}
+
+function Icon({ name }) {
+  const paths = {
+    mic: <><rect x="9" y="3" width="6" height="11" rx="3" /><path d="M5 11a7 7 0 0 0 14 0M12 18v3M8 21h8" /></>,
+    clock: <><circle cx="12" cy="12" r="8.5" /><path d="M12 7v5l3 2" /></>,
+    sparkle: <path d="m12 3 1.5 6.5L20 12l-6.5 1.5L12 20l-1.5-6.5L4 12l6.5-2.5L12 3Z" />,
+    bolt: <path d="m13 2-8 11h6l-1 9 8-12h-6l1-8Z" />,
+    slash: <path d="M5 19 19 5" />,
+  }
+  return <svg className="nav-icon" viewBox="0 0 24 24" aria-hidden="true">{paths[name]}</svg>
 }
 
 function Record({ corrected, onCorrect, onOffer, showOffer, onDismissOffer, onForm }) {
